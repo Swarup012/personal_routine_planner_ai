@@ -59,3 +59,7 @@ pnpm run dev
 ```shell
 pnpm run build
 ```
+
+
+https://github.com/user-attachments/assets/2fc5247a-4124-4eba-a4c6-3df4c046b357
+

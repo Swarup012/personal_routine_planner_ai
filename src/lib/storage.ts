@@ -36,6 +36,14 @@ export function saveApiKey(apiKey: string): void {
   });
 }
 
+export function clearApiKey(): void {
+  const appState = loadAppState() || getDefaultAppState();
+  saveAppState({
+    ...appState,
+    apiKey: null,
+  });
+}
+
 export function saveThemeMode(themeMode: ThemeMode): void {
   const appState = loadAppState() || getDefaultAppState();
   saveAppState({

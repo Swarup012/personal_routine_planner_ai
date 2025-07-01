@@ -46,6 +46,12 @@ export default function RoutineInput() {
         selectedDate: selectedDate.toISOString(),
       });
 
+      if (!response || !response.todos || !Array.isArray(response.todos)) {
+        console.error("Invalid response structure:", response);
+        setError("Received invalid response from AI service. Please try again.");
+        return;
+      }
+
       const todos = response.todos.map((todo) => ({
         id: uuidv4(),
         title: todo.title,

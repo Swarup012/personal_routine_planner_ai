@@ -4,6 +4,7 @@ import {
   getDefaultAppState,
   loadAppState,
   saveApiKey,
+  clearApiKey,
   saveRoutine,
   saveThemeMode,
   saveUserDetails,
@@ -20,6 +21,7 @@ interface AppContextProps {
   themeMode: ThemeMode;
   setUserDetails: (details: UserDetails) => void;
   setApiKey: (key: string) => void;
+  clearApiKey: () => void;
   generateRoutine: (routine: DailyRoutine) => void;
   setCurrentRoutine: (routine: DailyRoutine) => void;
   updateTodoStatus: (routineId: string, todoId: string, completed: boolean) => void;
@@ -53,6 +55,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setAppState((prev) => ({
       ...prev,
       apiKey: key,
+    }));
+  };
+
+  const handleClearApiKey = () => {
+    clearApiKey();
+    setAppState((prev) => ({
+      ...prev,
+      apiKey: null,
     }));
   };
 
@@ -143,6 +153,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     ...appState,
     setUserDetails: handleSetUserDetails,
     setApiKey: handleSetApiKey,
+    clearApiKey: handleClearApiKey,
     generateRoutine: handleGenerateRoutine,
     setCurrentRoutine: handleSetCurrentRoutine,
     updateTodoStatus: handleUpdateTodoStatus,

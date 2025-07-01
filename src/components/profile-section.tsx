@@ -1,14 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAppContext } from "@/context/app-context";
-import { BookOpen, Briefcase, Calendar, User } from "lucide-react";
+import { BookOpen, Briefcase, Calendar, User, Key, AlertCircle, Loader2, CheckCircle2 } from "lucide-react";
 import ThemeToggle from "./theme-toggle";
+import { GeminiService } from "@/lib/gemini";
 
 export default function ProfileSection() {
-  const { userDetails } = useAppContext();
+  const { userDetails, apiKey, clearApiKey, setApiKey } = useAppContext();
+  const [showApiKeyInput, setShowApiKeyInput] = useState(false);
+  const [newApiKey, setNewApiKey] = useState("");
+  const [isValidating, setIsValidating] = useState(false);
+  const [isValid, setIsValid] = useState<boolean | null>(null);
+  const [errorMessage, setErrorMessage] = useState("");
   
   if (!userDetails) return null;
 
@@ -28,6 +38,59 @@ export default function ProfileSection() {
     month: "long",
     day: "numeric",
   });
+
+  const handleChangeKey = () => {
+    clearApiKey();
+    setShowApiKeyInput(true);
+    setNewApiKey("");
+    setIsValid(null);
+    setErrorMessage("");
+  };
+
+  const handleCancelChangeKey = () => {
+    setShowApiKeyInput(false);
+    setNewApiKey("");
+    setIsValid(null);
+    setErrorMessage("");
+  };
+
+  const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewApiKey(e.target.value);
+    setIsValid(null);
+    setErrorMessage("");
+  };
+
+  const validateAndSaveApiKey = async () => {
+    if (!newApiKey.trim()) {
+      setErrorMessage("Please enter your Gemini API key");
+      return;
+    }
+    
+    setIsValidating(true);
+    setErrorMessage("");
+    
+    try {
+      const geminiService = new GeminiService({ apiKey: newApiKey });
+      const isValidKey = await geminiService.validateApiKey();
+      
+      setIsValid(isValidKey);
+      
+      if (isValidKey) {
+        setApiKey(newApiKey);
+        setShowApiKeyInput(false);
+        setNewApiKey("");
+        setIsValid(null);
+      } else {
+        setErrorMessage("Invalid API key. Please check and try again.");
+      }
+    } catch (error) {
+      setIsValid(false);
+      setErrorMessage("Failed to validate API key. Please try again.");
+      console.error("API key validation error:", error);
+    } finally {
+      setIsValidating(false);
+    }
+  };
 
   return (
     <motion.div
@@ -78,6 +141,95 @@ export default function ProfileSection() {
               <span>AI-Powered Planner</span>
             </div>
           </div>
+          
+          {apiKey && !showApiKeyInput && (
+            <div className="pt-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleChangeKey}
+                className="w-full"
+              >
+                <Key className="h-4 w-4 mr-2" />
+                Change Key
+              </Button>
+            </div>
+          )}
+
+          {showApiKeyInput && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="pt-4 space-y-3"
+            >
+              <div className="space-y-2">
+                <Label htmlFor="new-api-key">New Gemini API Key</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="new-api-key"
+                    type="password"
+                    placeholder="Enter your new Gemini API key"
+                    value={newApiKey}
+                    onChange={handleApiKeyChange}
+                    className="flex-1"
+                  />
+                  <Button
+                    onClick={validateAndSaveApiKey}
+                    disabled={isValidating}
+                    size="icon"
+                  >
+                    {isValidating ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : isValid ? (
+                      <CheckCircle2 className="h-4 w-4" />
+                    ) : (
+                      <span>→</span>
+                    )}
+                  </Button>
+                </div>
+              </div>
+              
+              {isValid === false && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{errorMessage}</AlertDescription>
+                  </Alert>
+                </motion.div>
+              )}
+              
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleCancelChangeKey}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  size="sm" 
+                  onClick={validateAndSaveApiKey}
+                  disabled={isValidating || !newApiKey.trim()}
+                  className="flex-1"
+                >
+                  {isValidating ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Validating...
+                    </>
+                  ) : (
+                    "Save Key"
+                  )}
+                </Button>
+              </div>
+            </motion.div>
+          )}
         </CardContent>
       </Card>
     </motion.div>

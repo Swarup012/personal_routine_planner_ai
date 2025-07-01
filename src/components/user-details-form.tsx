@@ -65,7 +65,7 @@ export default function UserDetailsForm() {
         occupation: data.occupation,
       });
       
-      navigate("/dashboard");
+      navigate("/landing");
     } catch (error) {
       console.error("Error saving user details:", error);
     } finally {

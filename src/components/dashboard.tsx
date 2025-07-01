@@ -1,6 +1,7 @@
 // Main dashboard component for the routine planner
 import React from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { useAppContext } from "@/context/app-context";
 import ProfileSection from "./profile-section";
 import RoutineInput from "./routine-input";
@@ -8,9 +9,10 @@ import TodoCard from "./todo-card";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { CalendarClock } from "lucide-react";
+import { CalendarClock, ArrowLeft } from "lucide-react";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const { currentRoutine, routines, userDetails, setCurrentRoutine } = useAppContext();
   
   // Sort routines by date (most recent first)
@@ -37,6 +39,22 @@ export default function Dashboard() {
   
   return (
     <div className="container mx-auto p-4 py-6 max-w-6xl">
+      {/* Back Button */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-6"
+      >
+        <Button
+          variant="outline"
+          onClick={() => navigate("/landing")}
+          className="flex items-center gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Dashboard
+        </Button>
+      </motion.div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <motion.div 
           className="lg:col-span-1"

@@ -1,24 +1,54 @@
-// Component for inputting and validating Gemini API key
+// Component for inputting and validating API keys from different providers
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Loader2, CheckCircle2 } from "lucide-react";
-import { GeminiService } from "@/lib/gemini";
+import { AlertCircle, Loader2, CheckCircle2, ChevronDown } from "lucide-react";
 import { useAppContext } from "@/context/app-context";
+import { AIService } from "@/lib/ai-service";
 
 interface ApiKeyInputProps {
   onValidated: () => void;
 }
 
+const AI_PROVIDERS = [
+  {
+    id: 'gemini',
+    name: 'Google Gemini',
+    description: 'Gemini 1.5 Flash API',
+    placeholder: 'Enter your Gemini API key',
+    helpUrl: 'https://ai.google.dev/',
+    color: 'from-blue-500 to-purple-600'
+  },
+  {
+    id: 'openai',
+    name: 'OpenAI',
+    description: 'GPT-4, GPT-3.5 Turbo',
+    placeholder: 'Enter your OpenAI API key',
+    helpUrl: 'https://platform.openai.com/api-keys',
+    color: 'from-green-500 to-emerald-600'
+  },
+  {
+    id: 'deepseek',
+    name: 'DeepSeek',
+    description: 'DeepSeek Chat API',
+    placeholder: 'Enter your DeepSeek API key',
+    helpUrl: 'https://platform.deepseek.com/',
+    color: 'from-orange-500 to-red-600'
+  }
+];
+
 export default function ApiKeyInput({ onValidated }: ApiKeyInputProps) {
-  const { setApiKey, apiKey: savedApiKey } = useAppContext();
+  const { setApiKey, apiKey: savedApiKey, selectedProvider, setSelectedProvider } = useAppContext();
   const [apiKey, setApiKeyLocal] = useState<string>(savedApiKey || "");
   const [isValidating, setIsValidating] = useState<boolean>(false);
   const [isValid, setIsValid] = useState<boolean | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [showProviderDropdown, setShowProviderDropdown] = useState(false);
+  
+  const currentProvider = AI_PROVIDERS.find(p => p.id === selectedProvider);
   
   const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setApiKeyLocal(e.target.value);
@@ -28,7 +58,7 @@ export default function ApiKeyInput({ onValidated }: ApiKeyInputProps) {
   
   const validateApiKey = async () => {
     if (!apiKey.trim()) {
-      setErrorMessage("Please enter your Gemini API key");
+      setErrorMessage(`Please enter your ${currentProvider?.name} API key`);
       return;
     }
     
@@ -36,8 +66,12 @@ export default function ApiKeyInput({ onValidated }: ApiKeyInputProps) {
     setErrorMessage("");
     
     try {
-      const geminiService = new GeminiService({ apiKey });
-      const isValidKey = await geminiService.validateApiKey();
+      const aiService = new AIService({
+        apiKey: apiKey,
+        provider: selectedProvider as 'gemini' | 'openai' | 'deepseek'
+      });
+      
+      const isValidKey = await aiService.validateApiKey();
       
       setIsValid(isValidKey);
       
@@ -45,11 +79,11 @@ export default function ApiKeyInput({ onValidated }: ApiKeyInputProps) {
         setApiKey(apiKey);
         onValidated();
       } else {
-        setErrorMessage("Invalid API key. Please check and try again.");
+        setErrorMessage(`Invalid ${currentProvider?.name} API key. Please check and try again.`);
       }
     } catch (error) {
       setIsValid(false);
-      setErrorMessage("Failed to validate API key. Please try again.");
+      setErrorMessage(`Failed to validate ${currentProvider?.name} API key. Please try again.`);
       console.error("API key validation error:", error);
     } finally {
       setIsValidating(false);
@@ -58,13 +92,62 @@ export default function ApiKeyInput({ onValidated }: ApiKeyInputProps) {
   
   return (
     <div className="space-y-4">
+      {/* Provider Selection */}
       <div className="space-y-2">
-        <Label htmlFor="api-key">Gemini API Key</Label>
+        <Label>AI Provider</Label>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setShowProviderDropdown(!showProviderDropdown)}
+            className="w-full flex items-center justify-between p-3 bg-background border border-input rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${currentProvider?.color}`}></div>
+              <div className="text-left">
+                <div className="font-medium">{currentProvider?.name}</div>
+                <div className="text-xs text-muted-foreground">{currentProvider?.description}</div>
+              </div>
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${showProviderDropdown ? 'rotate-180' : ''}`} />
+          </button>
+          
+          {showProviderDropdown && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="absolute top-full left-0 right-0 mt-1 bg-background border border-input rounded-md shadow-lg z-10"
+            >
+              {AI_PROVIDERS.map((provider) => (
+                <button
+                  key={provider.id}
+                  onClick={() => {
+                    setSelectedProvider(provider.id);
+                    setShowProviderDropdown(false);
+                    setIsValid(null);
+                    setErrorMessage("");
+                  }}
+                  className="w-full flex items-center gap-3 p-3 hover:bg-accent hover:text-accent-foreground transition-colors text-left"
+                >
+                  <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${provider.color}`}></div>
+                  <div>
+                    <div className="font-medium">{provider.name}</div>
+                    <div className="text-xs text-muted-foreground">{provider.description}</div>
+                  </div>
+                </button>
+              ))}
+            </motion.div>
+          )}
+        </div>
+      </div>
+      
+      {/* API Key Input */}
+      <div className="space-y-2">
+        <Label htmlFor="api-key">{currentProvider?.name} API Key</Label>
         <div className="flex gap-2">
           <Input
             id="api-key"
             type="password"
-            placeholder="Enter your Gemini-1.5-flash API key"
+            placeholder={currentProvider?.placeholder}
             value={apiKey}
             onChange={handleApiKeyChange}
             className="flex-1"
@@ -105,15 +188,15 @@ export default function ApiKeyInput({ onValidated }: ApiKeyInputProps) {
         className="text-sm text-muted-foreground"
       >
         <p>
-          To use this application, you need a free Gemini-1.5-flash API key.
+          To use this application, you need a {currentProvider?.name} API key.
           You can get one from the{" "}
           <a
-            href="https://ai.google.dev/"
+            href={currentProvider?.helpUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary underline underline-offset-2"
           >
-            Google AI Studio
+            {currentProvider?.name} Platform
           </a>
           .
         </p>

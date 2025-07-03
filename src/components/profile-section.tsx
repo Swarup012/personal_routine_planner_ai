@@ -13,7 +13,7 @@ import ThemeToggle from "./theme-toggle";
 import { GeminiService } from "@/lib/gemini";
 
 export default function ProfileSection() {
-  const { userDetails, apiKey, clearApiKey, setApiKey } = useAppContext();
+  const { userDetails, apiKey, clearApiKey, setApiKey, selectedProvider } = useAppContext();
   const [showApiKeyInput, setShowApiKeyInput] = useState(false);
   const [newApiKey, setNewApiKey] = useState("");
   const [isValidating, setIsValidating] = useState(false);
@@ -142,94 +142,15 @@ export default function ProfileSection() {
             </div>
           </div>
           
-          {apiKey && !showApiKeyInput && (
-            <div className="pt-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleChangeKey}
-                className="w-full"
-              >
-                <Key className="h-4 w-4 mr-2" />
-                Change Key
-              </Button>
-            </div>
-          )}
-
-          {showApiKeyInput && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="pt-4 space-y-3"
-            >
-              <div className="space-y-2">
-                <Label htmlFor="new-api-key">New Gemini API Key</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="new-api-key"
-                    type="password"
-                    placeholder="Enter your new Gemini API key"
-                    value={newApiKey}
-                    onChange={handleApiKeyChange}
-                    className="flex-1"
-                  />
-                  <Button
-                    onClick={validateAndSaveApiKey}
-                    disabled={isValidating}
-                    size="icon"
-                  >
-                    {isValidating ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : isValid ? (
-                      <CheckCircle2 className="h-4 w-4" />
-                    ) : (
-                      <span>→</span>
-                    )}
-                  </Button>
-                </div>
-              </div>
-              
-              {isValid === false && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>{errorMessage}</AlertDescription>
-                  </Alert>
-                </motion.div>
-              )}
-              
-              <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={handleCancelChangeKey}
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
-                <Button 
-                  size="sm" 
-                  onClick={validateAndSaveApiKey}
-                  disabled={isValidating || !newApiKey.trim()}
-                  className="flex-1"
-                >
-                  {isValidating ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Validating...
-                    </>
-                  ) : (
-                    "Save Key"
-                  )}
-                </Button>
-              </div>
-            </motion.div>
-          )}
+          {/* Connected AI Provider Status */}
+          <div className="flex items-center gap-2 pt-2">
+            <span className={`h-3 w-3 rounded-full ${apiKey ? 'bg-green-500' : 'bg-red-500'}`}></span>
+            <span className="text-sm text-muted-foreground">
+              {apiKey
+                ? `Connected to ${selectedProvider.charAt(0).toUpperCase() + selectedProvider.slice(1)}`
+                : 'Not connected to AI provider'}
+            </span>
+          </div>
         </CardContent>
       </Card>
     </motion.div>

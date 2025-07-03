@@ -19,13 +19,15 @@ interface AppContextProps {
   currentRoutine: DailyRoutine | null;
   isOnboarded: boolean;
   themeMode: ThemeMode;
-  setUserDetails: (details: UserDetails) => void;
+  selectedProvider: string;
+  setUserDetails: (details: UserDetails | null) => void;
   setApiKey: (key: string) => void;
   clearApiKey: () => void;
   generateRoutine: (routine: DailyRoutine) => void;
   setCurrentRoutine: (routine: DailyRoutine) => void;
   updateTodoStatus: (routineId: string, todoId: string, completed: boolean) => void;
   toggleTheme: () => void;
+  setSelectedProvider: (provider: string) => void;
 }
 
 const AppContext = createContext<AppContextProps | undefined>(undefined);
@@ -36,12 +38,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return savedState || getDefaultAppState();
   });
 
+  const [selectedProvider, setSelectedProviderState] = useState<string>('gemini');
+
   useEffect(() => {
     initializeTheme();
     setTheme(appState.themeMode);
   }, []);
 
-  const handleSetUserDetails = (details: UserDetails) => {
+  const handleSetUserDetails = (details: UserDetails | null) => {
     saveUserDetails(details);
     setAppState((prev) => ({
       ...prev,
@@ -149,8 +153,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
   };
 
+  const handleSetSelectedProvider = (provider: string) => {
+    setSelectedProviderState(provider);
+  };
+
   const value: AppContextProps = {
     ...appState,
+    selectedProvider,
     setUserDetails: handleSetUserDetails,
     setApiKey: handleSetApiKey,
     clearApiKey: handleClearApiKey,
@@ -158,6 +167,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setCurrentRoutine: handleSetCurrentRoutine,
     updateTodoStatus: handleUpdateTodoStatus,
     toggleTheme: handleToggleTheme,
+    setSelectedProvider: handleSetSelectedProvider,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

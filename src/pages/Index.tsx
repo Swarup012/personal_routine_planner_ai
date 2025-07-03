@@ -76,7 +76,7 @@ export default function Index() {
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: idx * 0.1, duration: 0.5 }}
+                transition={{ duration: 0.1, ease: "easeOut" }} // ✅ No delay
                 className={`flex flex-col items-center gap-2 p-4 bg-gradient-to-br ${color} text-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 min-w-[120px]`}
               >
                 <Icon className="h-6 w-6 drop-shadow" />
@@ -112,7 +112,7 @@ export default function Index() {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.8 }}
+            transition={{ delay: 0.2, duration: 0.3 }}
             whileHover={{ scale: 1.05 }}
             className="flex justify-center"
           >

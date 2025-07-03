@@ -106,6 +106,17 @@ export function updateTodoItem(routineId: string, todoItem: TodoItem): void {
   }
 }
 
+export function deleteRoutine(routineId: string): void {
+  const appState = loadAppState() || getDefaultAppState();
+  const updatedRoutines = appState.routines.filter(r => r.id !== routineId);
+  const isCurrent = appState.currentRoutine?.id === routineId;
+  saveAppState({
+    ...appState,
+    routines: updatedRoutines,
+    currentRoutine: isCurrent ? null : appState.currentRoutine,
+  });
+}
+
 export function getDefaultAppState(): AppState {
   return {
     userDetails: null,

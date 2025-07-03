@@ -9,6 +9,7 @@ import {
   saveThemeMode,
   saveUserDetails,
   updateTodoItem,
+  deleteRoutine,
 } from "@/lib/storage";
 import { setTheme, initializeTheme } from "@/lib/theme";
 
@@ -28,6 +29,7 @@ interface AppContextProps {
   updateTodoStatus: (routineId: string, todoId: string, completed: boolean) => void;
   toggleTheme: () => void;
   setSelectedProvider: (provider: string) => void;
+  deleteAllTodos: () => void;
 }
 
 const AppContext = createContext<AppContextProps | undefined>(undefined);
@@ -157,6 +159,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setSelectedProviderState(provider);
   };
 
+  const handleDeleteAllTodos = () => {
+    setAppState((prev) => {
+      if (!prev.currentRoutine) return prev;
+      // Remove the current routine from the routines list
+      const updatedRoutines = prev.routines.filter(r => r.id !== prev.currentRoutine!.id);
+      // Remove from storage as well
+      deleteRoutine(prev.currentRoutine.id);
+      return {
+        ...prev,
+        routines: updatedRoutines,
+        currentRoutine: null,
+      };
+    });
+  };
+
   const value: AppContextProps = {
     ...appState,
     selectedProvider,
@@ -168,6 +185,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     updateTodoStatus: handleUpdateTodoStatus,
     toggleTheme: handleToggleTheme,
     setSelectedProvider: handleSetSelectedProvider,
+    deleteAllTodos: handleDeleteAllTodos,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

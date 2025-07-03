@@ -99,9 +99,9 @@ export default function ProfileSection() {
       transition={{ duration: 0.5 }}
     >
       <Card className="overflow-hidden">
-        <CardHeader className="bg-primary text-primary-foreground flex flex-row items-center justify-between p-4 pb-8">
+        <CardHeader className="bg-primary text-primary-foreground flex flex-col sm:flex-row items-center justify-between p-3 sm:p-4 pb-8 gap-2 sm:gap-0">
           <div>
-            <h2 className="text-lg font-bold">{name}'s Planner</h2>
+            <h2 className="text-base sm:text-lg font-bold break-words">{name}'s Planner</h2>
             <p className="text-xs opacity-80 flex items-center gap-1">
               <Calendar className="h-3 w-3" /> {currentDate}
             </p>
@@ -110,8 +110,8 @@ export default function ProfileSection() {
         </CardHeader>
         
         <div className="relative">
-          <div className="absolute -top-6 left-4">
-            <Avatar className="h-12 w-12 border-2 border-background">
+          <div className="absolute -top-6 left-2 sm:left-4">
+            <Avatar className="h-10 w-10 sm:h-12 sm:w-12 border-2 border-background">
               <AvatarFallback className="bg-primary text-primary-foreground">
                 {initials}
               </AvatarFallback>
@@ -119,7 +119,7 @@ export default function ProfileSection() {
           </div>
         </div>
         
-        <CardContent className="pt-8 pb-4 space-y-4">
+        <CardContent className="pt-8 pb-4 space-y-4 text-xs sm:text-sm">
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2 text-sm">
               <User className="h-4 w-4 text-muted-foreground" />
@@ -145,7 +145,7 @@ export default function ProfileSection() {
           {/* Connected AI Provider Status */}
           <div className="flex items-center gap-2 pt-2">
             <span className={`h-3 w-3 rounded-full ${apiKey ? 'bg-green-500' : 'bg-red-500'}`}></span>
-            <span className="text-sm text-muted-foreground">
+            <span className="text-xs sm:text-sm text-muted-foreground">
               {apiKey
                 ? `Connected to ${selectedProvider.charAt(0).toUpperCase() + selectedProvider.slice(1)}`
                 : 'Not connected to AI provider'}

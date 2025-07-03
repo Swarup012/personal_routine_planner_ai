@@ -16,7 +16,7 @@ export default function Index() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors">
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors px-2 sm:px-4 py-4 overflow-x-hidden">
       
       {/* === Glowing background circles === */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -53,9 +53,9 @@ export default function Index() {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="relative z-10 w-full max-w-4xl mx-4 md:mx-auto text-center p-8 md:p-12"
+        className="relative z-10 w-full max-w-4xl mx-2 sm:mx-auto text-center p-3 xs:p-4 sm:p-8 md:p-12"
       >
-        <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/50 p-8 md:p-12">
+        <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/50 p-3 xs:p-4 sm:p-8 md:p-12">
 
           {/* Sparkle Icon */}
           <div className="flex justify-center mb-6">
@@ -69,7 +69,7 @@ export default function Index() {
           </div>
 
           {/* Feature Cards */}
-          <div className="flex flex-wrap justify-center gap-5 mb-10">
+          <div className="flex flex-wrap justify-center gap-3 xs:gap-4 sm:gap-5 mb-8 sm:mb-10">
             {features.map(({ icon: Icon, label, color }, idx) => (
               <motion.div
                 key={idx}
@@ -77,7 +77,7 @@ export default function Index() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.1, ease: "easeOut" }} // ✅ No delay
-                className={`flex flex-col items-center gap-2 p-4 bg-gradient-to-br ${color} text-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 min-w-[120px]`}
+                className={`flex flex-col items-center gap-2 p-3 xs:p-4 bg-gradient-to-br ${color} text-white rounded-xl sm:rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 min-w-[96px] xs:min-w-[110px] sm:min-w-[120px]`}
               >
                 <Icon className="h-6 w-6 drop-shadow" />
                 <span className="text-sm font-semibold">{label}</span>
@@ -90,7 +90,7 @@ export default function Index() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.8 }}
-            className="text-4xl md:text-6xl font-black mb-6 bg-gradient-to-r from-slate-800 via-blue-600 to-purple-600 dark:from-white dark:via-blue-300 dark:to-purple-300 bg-clip-text text-transparent leading-tight"
+            className="text-2xl xs:text-3xl sm:text-4xl md:text-6xl font-black mb-4 sm:mb-6 bg-gradient-to-r from-slate-800 via-blue-600 to-purple-600 dark:from-white dark:via-blue-300 dark:to-purple-300 bg-clip-text text-transparent leading-tight break-words"
           >
             Your Personal AI <br />
             <span className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">
@@ -103,7 +103,7 @@ export default function Index() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
-            className="text-lg md:text-xl text-slate-600 dark:text-slate-300 mb-10 font-medium max-w-2xl mx-auto leading-relaxed"
+            className="text-base xs:text-lg sm:text-xl text-slate-600 dark:text-slate-300 mb-6 sm:mb-10 font-medium max-w-2xl mx-auto leading-relaxed"
           >
             Plan smarter. Grow faster. Live better with your AI-powered all-in-one dashboard for productivity and wellness.
           </motion.p>
@@ -118,13 +118,13 @@ export default function Index() {
           >
             <Button
               size="lg"
-              className="text-lg px-12 py-6 rounded-full font-bold shadow-2xl transition-all duration-300 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 text-white border-0 group"
+              className="text-base xs:text-lg px-6 xs:px-10 sm:px-12 py-4 xs:py-5 sm:py-6 rounded-full font-bold shadow-2xl transition-all duration-300 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 text-white border-0 group"
               onClick={() => navigate("/onboarding")}
             >
-              <span className="flex items-center gap-3">
-                <Sparkles className="w-6 h-6" />
+              <span className="flex items-center gap-2 xs:gap-3">
+                <Sparkles className="w-5 h-5 xs:w-6 xs:h-6" />
                 Get Started
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 xs:w-5 xs:h-5 group-hover:translate-x-1 transition-transform" />
               </span>
             </Button>
           </motion.div>
@@ -134,9 +134,9 @@ export default function Index() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 0.8 }}
-            className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-700"
+            className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-slate-200 dark:border-slate-700"
           >
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-xs xs:text-sm sm:text-base text-slate-500 dark:text-slate-400">
               Trusted by thousands • Secure & Private • AI-Powered
             </p>
           </motion.div>

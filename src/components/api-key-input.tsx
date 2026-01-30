@@ -17,7 +17,7 @@ const AI_PROVIDERS = [
   {
     id: 'gemini',
     name: 'Google Gemini',
-    description: 'Gemini 1.5 Flash API',
+    description: 'Gemini 2.0 Flash API',
     placeholder: 'Enter your Gemini API key',
     helpUrl: 'https://ai.google.dev/',
     color: 'from-blue-500 to-purple-600'
